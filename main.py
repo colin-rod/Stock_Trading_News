@@ -22,12 +22,8 @@ def get_stock_data():
     data = response.json()
     first_date = list(data["Time Series (Daily)"].keys())[0]
     first_close_value = data["Time Series (Daily)"][first_date]["4. close"]
-    print(first_date)
-    print(first_close_value)
     second_date = list(data["Time Series (Daily)"].keys())[1]
     second_close_value = data["Time Series (Daily)"][second_date]["4. close"]
-    print(second_date)
-    print(second_close_value)
     close_data = [
         {"date": first_date, "close": float(first_close_value)},
         {"date": second_date, "close": float(second_close_value)}
@@ -48,14 +44,11 @@ def get_news_data():
     response = requests.get(url="https://newsapi.org/v2/top-headlines?", params=parameters)
     response.raise_for_status()
     data = response.json()
-    print(data)
-    print(data['articles'][0])
     news_data = [
         {"Headline": data['articles'][0]['title'], "Brief": data['articles'][0]['description']},
         {"Headline": data['articles'][1]['title'], "Brief": data['articles'][1]['description']},
         {"Headline": data['articles'][2]['title'], "Brief": data['articles'][2]['description']}
     ]
-    print(news_data)
     return news_data
 
 
@@ -64,9 +57,7 @@ def send_message(data, delta):
     message = client.messages.create(
         from_='whatsapp:+14155238886',
         to='whatsapp:+4915901637965',
-        body=f"{STOCK}: {delta}%\n"
-             f"Headline: {data[0]['Headline']}\n"
-             f"Brief:  {data[0]['Brief']}"
+        body=f"{STOCK}: {delta}%\n Headline: {data[0]['Headline']}\n Brief:  {data[0]['Brief']}"
     )
     print(message.status)
 
@@ -74,7 +65,6 @@ def send_message(data, delta):
 price_close_data = get_stock_data()
 delta = compare_close(price_close_data)
 if compare_close(price_close_data) > 0.05:
-    print("Get News")
     news = get_news_data()
     send_message(news, delta)
 news = get_news_data()
